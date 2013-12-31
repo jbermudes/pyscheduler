@@ -1,0 +1,10 @@
+*.pyc
+*.csv
+
+# OS Misc
+Thumbs.db
+.DS_Store
+.DS_Store?
+.Trashes
+*._*
+*~
