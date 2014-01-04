@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 import csv
+import itertools
 import os
+import random
 import sys
 import scheduler
 from entry import Entry
@@ -26,21 +28,44 @@ def export_entries(entries, filename):
     for entry in entries:
       csvfile.write(entry.to_csv('\t'))
 
-if __name__ == "__main__":
-  min_distance = int(sys.argv[1])
-  filename = sys.argv[2]
-  out_filename = sys.argv[3]
-  print "Working with file %s" % (filename)
-      
-  unsorted_entries = load_entries(filename)
+def round_robin_shuffle(*iterables):
+  num_lists = len(iterables)
+  dst = []
+  while num_lists > 0:
+    if num_lists > 1:
+      # distribute via round robin
+      for li in iterables:
+        if len(li) > 0:
+          dst.append(li.pop(0))
+      iterables = filter(None, iterables)
+      num_lists = len(iterables)
+    else:
+      # distribute last stack throughout list
+      li = iterables[0]
+      i = 1
+      while len(li) > 0:
+        dst.insert(i, li.pop(0))
+        if len(li) > 0:
+          i = (i+2) % len(dst)
+        else:
+          # li is empty, we're done
+          num_lists = 0
+
+  return dst
+
+ 
+def distribute_studios(entries):
+  entries.sort(key= lambda e: e.studio)
   
-  print "%d entries found.\n" % len(unsorted_entries)
+  studios = []
+  for k,g in itertools.groupby(entries, lambda e: e.studio):
+    studios.append(list(g))
 
-  c = scheduler.count_conflicts(unsorted_entries, min_distance)
+  entries = list(round_robin_shuffle(*studios))
+  return entries
 
-  print "%d conflicts found.\n" % c
-
-  sorted_entries = scheduler.do_schedule(unsorted_entries, min_distance)
+def schedule(entries, min_distance):
+  sorted_entries = scheduler.do_schedule(entries, min_distance)
   
   c2 = scheduler.count_conflicts(sorted_entries, min_distance)
 
@@ -60,6 +85,30 @@ if __name__ == "__main__":
 
     if c3 < c2:
       sorted_entries = sorted2
+
+  return entries
+
+if __name__ == "__main__":
+  min_distance = int(sys.argv[1])
+  filename = sys.argv[2]
+  out_filename = sys.argv[3]
+  print "Working with file %s" % (filename)
+      
+  unsorted_entries = load_entries(filename)
+  random.shuffle(unsorted_entries)
+  unsorted_entries = distribute_studios(unsorted_entries)
+  
+  print "%d entries found.\n" % len(unsorted_entries)
+
+  c = scheduler.count_conflicts(unsorted_entries, min_distance)
+
+  print "%d conflicts found.\n" % c
+
+  sorted_entries = schedule(unsorted_entries, min_distance)
+
+  #Entry.__eq__ = lambda a,b: a.studio == b.studio
+  #print "Attempting studio spacing\n"
+  #sorted_entries = schedule(sorted_entries, min_distance)
 
   export_entries(sorted_entries, out_filename)
 
