@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import argparse
 import csv
 import itertools
 import os
@@ -89,9 +90,15 @@ def schedule(entries, min_distance):
   return entries
 
 if __name__ == "__main__":
-  min_distance = int(sys.argv[1])
-  filename = sys.argv[2]
-  out_filename = sys.argv[3]
+  parser = argparse.ArgumentParser()
+  parser.add_argument("file", help="CSV file to use as input")
+  parser.add_argument("-d", "--distance", help="the minimum distance to space routines", type=int, default=3)
+  parser.add_argument("-o", "--output", help="the file to use for the new schedule", type= str)
+  args = parser.parse_args()
+
+  min_distance = args.distance
+  filename = args.file
+  out_filename = args.output
   print "Working with file %s" % (filename)
       
   unsorted_entries = load_entries(filename)
@@ -109,6 +116,6 @@ if __name__ == "__main__":
   #Entry.__eq__ = lambda a,b: a.studio == b.studio
   #print "Attempting studio spacing\n"
   #sorted_entries = schedule(sorted_entries, min_distance)
-
-  export_entries(sorted_entries, out_filename)
+  if out_filename:
+    export_entries(sorted_entries, out_filename)
 
