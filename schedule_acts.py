@@ -114,5 +114,6 @@ if __name__ == "__main__":
   sorted_entries = schedule(unsorted_entries, min_distance)
 
   if out_filename:
+    print "Writing results to file: %s" % out_filename
     export_entries(sorted_entries, out_filename)
 
