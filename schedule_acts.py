@@ -113,9 +113,6 @@ if __name__ == "__main__":
 
   sorted_entries = schedule(unsorted_entries, min_distance)
 
-  #Entry.__eq__ = lambda a,b: a.studio == b.studio
-  #print "Attempting studio spacing\n"
-  #sorted_entries = schedule(sorted_entries, min_distance)
   if out_filename:
     export_entries(sorted_entries, out_filename)
 
