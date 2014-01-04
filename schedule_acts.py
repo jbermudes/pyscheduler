@@ -93,6 +93,7 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument("file", help="CSV file to use as input")
   parser.add_argument("-d", "--distance", help="the minimum distance to space routines", type=int, default=3)
+  parser.add_argument("-s", "--shuffle", help="shuffle routines randomly before scheduling")
   parser.add_argument("-o", "--output", help="the file to use for the new schedule", type= str)
   args = parser.parse_args()
 
@@ -102,7 +103,11 @@ if __name__ == "__main__":
   print "Working with file %s" % (filename)
       
   unsorted_entries = load_entries(filename)
-  random.shuffle(unsorted_entries)
+
+  if args.shuffle:
+    print "Shuffling rows..."
+    random.shuffle(unsorted_entries)
+
   unsorted_entries = distribute_studios(unsorted_entries)
   
   print "%d entries found.\n" % len(unsorted_entries)
