@@ -5,7 +5,7 @@ class Entry:
     self.act = ""
     self.studio = dic["studio"]
     self.entry_type = dic["entry_type"]
-    self.category = dic["entry_category"]
+    self.category = dic["entry_grouping"]
     self.style = dic["style"]
     self.routine_name = dic["routine_name"]
     self.duration = dic["duration"]
