@@ -34,7 +34,7 @@ class Entry:
 
   @staticmethod
   def csv_header(delimiter=','):
-    s = "entry_id,act,studio,entry_type,age_group,entry_category,adj_level," \
+    s = "entry_id,act,studio,entry_type,age_group,entry_grouping,adj_level," \
         "style,routine_name,duration," \
         "num_dancers,add_title,extended,adjudication_only,"\
         "event,dancer_roster\n"
