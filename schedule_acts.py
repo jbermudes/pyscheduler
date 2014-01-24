@@ -93,7 +93,7 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument("file", help="CSV file to use as input")
   parser.add_argument("-d", "--distance", help="the minimum distance to space routines", type=int, default=3)
-  parser.add_argument("-s", "--shuffle", help="shuffle routines randomly before scheduling")
+  parser.add_argument("-s", "--shuffle", help="shuffle routines randomly before scheduling", action="store_true")
   parser.add_argument("-o", "--output", help="the file to use for the new schedule", type= str)
   parser.add_argument("-c", "--check", help="check the file for conflicts, but do not schedule", action="store_true")
   args = parser.parse_args()
