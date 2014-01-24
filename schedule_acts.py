@@ -87,7 +87,7 @@ def schedule(entries, min_distance):
     if c3 < c2:
       sorted_entries = sorted2
 
-  return entries
+  return sorted_entries
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
