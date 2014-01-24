@@ -95,6 +95,7 @@ if __name__ == "__main__":
   parser.add_argument("-d", "--distance", help="the minimum distance to space routines", type=int, default=3)
   parser.add_argument("-s", "--shuffle", help="shuffle routines randomly before scheduling")
   parser.add_argument("-o", "--output", help="the file to use for the new schedule", type= str)
+  parser.add_argument("-c", "--check", help="check the file for conflicts, but do not schedule", action="store_true")
   args = parser.parse_args()
 
   min_distance = args.distance
@@ -103,6 +104,11 @@ if __name__ == "__main__":
   print "Working with file %s" % (filename)
       
   unsorted_entries = load_entries(filename)
+
+  if args.check:
+    c = scheduler.count_conflicts(unsorted_entries, min_distance)
+    print "%d conflicts found.\n" % c
+    sys.exit(0)
 
   if args.shuffle:
     print "Shuffling rows..."
