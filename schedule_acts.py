@@ -113,8 +113,6 @@ if __name__ == "__main__":
   if args.shuffle:
     print "Shuffling rows..."
     random.shuffle(unsorted_entries)
-
-  unsorted_entries = distribute_studios(unsorted_entries)
   
   print "%d entries found.\n" % len(unsorted_entries)
 
@@ -122,9 +120,14 @@ if __name__ == "__main__":
 
   print "%d conflicts found.\n" % c
 
-  sorted_entries = schedule(unsorted_entries, min_distance)
+  if c > 0:
+    unsorted_entries = distribute_studios(unsorted_entries)
+    sorted_entries = schedule(unsorted_entries, min_distance)
+    if out_filename:
+      print "Writing results to file: %s" % out_filename
+      export_entries(sorted_entries, out_filename)
+  else:
+    print "Nothing to do. Terminating..."
 
-  if out_filename:
-    print "Writing results to file: %s" % out_filename
-    export_entries(sorted_entries, out_filename)
+
 
