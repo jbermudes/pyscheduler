@@ -13,6 +13,7 @@ def count_conflicts(L, min_distance):
   for k in xrange(len(L) - 1):
     conflict = check_conflict(L, k, min_distance)
     if conflict:
+      print "Conflict found @ %d" % (k+2)
       num_conflicts += 1
 
   return num_conflicts
