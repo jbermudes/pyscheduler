@@ -19,6 +19,8 @@ class Entry:
     self.dancers = dancers
 
 
+  def is_group(self):
+    return ("group" in self.category.lower() or "production" in self.category.lower())
   def to_csv(self, delimiter):
     dancers_str = ", ".join(self.dancers)
     s = "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n"
