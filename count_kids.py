@@ -64,11 +64,11 @@ if __name__ == "__main__":
     if is_group:
       total_group_dancers += len(entry.dancers)
 
-  print "Studio, Dancer, Non-Groups, Groups, Total"
+  print "Studio,Dancer,Non-Groups,Groups,Total"
   for studio_name in studios:
     for dancer in studios[studio_name]:
       dancer_data = all_dancers[dancer]
-      print "%s, %s, %d, %d, %d" % (studio_name, dancer, dancer_data[0], 
+      print "%s,%s,%d,%d,%d" % (studio_name, dancer, dancer_data[0], 
               dancer_data[1], dancer_data[2])
     studio_counts.append("%s, %d" % (studio_name, len(studios[studio_name])))
 
