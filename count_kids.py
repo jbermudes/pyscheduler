@@ -95,13 +95,13 @@ def main():
     print("Writing Dancer Roster with Routines")
 
     with open(dancer_roster_filename, "w") as f_dancer:
-        print("ID,Act,Routine Name,Studio,Dancer", file=f_dancer)
+        print("ID\tAct\tStudio\tRoutine Name\tDancer", file=f_dancer)
         for studio_name in studios:
             for dancer in studios[studio_name]:
               dancer_data = all_dancers[dancer]
               for entry in dancer_data[3]:
-                  print("%s,%s,%s,%s,%s" % (entry.entry_id, entry.act, 
-                      entry.routine_name, studio_name, dancer), file=f_dancer)
+                  print("%s\t%s\t%s\t%s\t%s" % (entry.entry_id, entry.act, 
+                      studio_name, entry.routine_name, dancer), file=f_dancer)
         print("", file=f_dancer)        
 
     #Write Summary File with Studio totals and award count estimates
