@@ -4,7 +4,7 @@ class Entry:
     self.entry_id = dic["entry_id"]
     self.act = ""
     self.studio = dic["studio"]
-    self.entry_type = dic["entry_type"]
+    self.entry_type = "Dance Routine"
     self.category = dic["entry_grouping"]
     self.style = dic["style"]
     self.routine_name = dic["routine_name"]
@@ -21,23 +21,25 @@ class Entry:
 
   def is_group(self):
     return ("group" in self.category.lower() or "production" in self.category.lower())
+
   def to_csv(self, delimiter):
     dancers_str = ", ".join(self.dancers)
-    s = "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n"
+    s = "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n"
     s = s.replace(",", delimiter)
     s = s % (
-        self.entry_id, self.act, self.studio, self.entry_type, 
+        self.entry_id, self.act, 
+        self.routine_name, self.studio,  
         self.age, self.category, self.level,
         self.style,
-        self.routine_name, self.duration, self.num_dancers, 
+        self.duration, self.num_dancers, 
         self.title, self.extended, self.adjudication_only,
         self.event, dancers_str)
     return s
 
   @staticmethod
   def csv_header(delimiter=','):
-    s = "entry_id,act,studio,entry_type,age_group,entry_grouping,adj_level," \
-        "style,routine_name,duration," \
+    s = "entry_id,act,routine_name,studio,age_group,entry_grouping,adj_level," \
+        "style,duration," \
         "num_dancers,add_title,extended,adjudication_only,"\
         "event,dancer_roster\n"
     if delimiter != ",":
