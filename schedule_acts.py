@@ -93,26 +93,38 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument("file", help="CSV file to use as input")
   parser.add_argument("-d", "--distance", help="the minimum distance to space routines", type=int, default=3)
-  parser.add_argument("-s", "--shuffle", help="shuffle routines randomly before scheduling", action="store_true")
-  parser.add_argument("-o", "--output", help="the file to use for the new schedule", type= str)
+  parser.add_argument("-s", "--shuffle", help="shuffle studios before scheduling", action="store_true")
+  parser.add_argument("-o", "--output", help="the file to use for the new schedule", action="store_true")
   parser.add_argument("-c", "--check", help="check the file for conflicts, but do not schedule", action="store_true")
   args = parser.parse_args()
 
   min_distance = args.distance
   filename = args.file
-  out_filename = args.output
-  print "Working with file %s" % (filename)
+  #out_filename = args.output
+  do_export = args.output
+  print "Input file:  %s" % (filename)
+
+  file_dir = os.path.dirname(filename)
+  base = os.path.basename(filename)
+  base_components = os.path.splitext(base)
+
+  out_filename = os.path.join(file_dir, base_components[0] + '.sorted.csv')
+  if do_export:
+    print "Output file: %s" % out_filename
+
+  print
       
   unsorted_entries = load_entries(filename)
 
   if args.check:
     c = scheduler.count_conflicts(unsorted_entries, min_distance)
     print "%d conflicts found.\n" % c
+    print "Check complete. Terminating..."
     sys.exit(0)
 
   if args.shuffle:
-    print "Shuffling rows..."
-    random.shuffle(unsorted_entries)
+    print "Shuffling studios..."
+    unsorted_entries = distribute_studios(unsorted_entries)
   
   print "%d entries found.\n" % len(unsorted_entries)
 
@@ -121,13 +133,17 @@ if __name__ == "__main__":
   print "%d conflicts found.\n" % c
 
   if c > 0:
+    print "Shuffling Studios..."
     unsorted_entries = distribute_studios(unsorted_entries)
     sorted_entries = schedule(unsorted_entries, min_distance)
-    if out_filename:
-      print "Writing results to file: %s" % out_filename
-      export_entries(sorted_entries, out_filename)
   else:
-    print "Nothing to do. Terminating..."
+    sorted_entries = unsorted_entries
+
+  if do_export:
+    print "Writing results to file: %s" % out_filename
+    export_entries(sorted_entries, out_filename)
+  else:
+    print "No export requested. Terminating..."
 
 
 
