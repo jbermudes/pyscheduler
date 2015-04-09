@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import division
 import argparse
 import csv
 import itertools
@@ -54,6 +55,28 @@ def round_robin_shuffle(*iterables):
 
   return dst
 
+def bresenham_distribute(lists):
+    while len(lists) > 1:
+        lists = sorted(lists, key = lambda li: len(li), reverse=True)
+
+        # Once lists are sorted, grab largest and 2nd largest
+        dest = lists[0]
+        src = lists[1]
+
+        offset = len(dest) / len(src)
+        counter = 0
+
+        # copy src into dest evenly
+        for item in src:
+            counter += offset
+            i = int(round(counter))
+            dest.insert(i, item)
+            counter += 1
+
+        # delete src since we've already copied it into dest
+        del lists[1]
+
+    return lists[0]
  
 def distribute_studios(entries):
   entries.sort(key= lambda e: e.studio)
@@ -62,7 +85,8 @@ def distribute_studios(entries):
   for k,g in itertools.groupby(entries, lambda e: e.studio):
     studios.append(list(g))
 
-  entries = list(round_robin_shuffle(*studios))
+  #entries = list(round_robin_shuffle(*studios))
+  entries = bresenham_distribute(studios)
   return entries
 
 def schedule(entries, min_distance):
@@ -96,6 +120,7 @@ if __name__ == "__main__":
   parser.add_argument("-s", "--shuffle", help="shuffle studios before scheduling", action="store_true")
   parser.add_argument("-o", "--output", help="the file to use for the new schedule", action="store_true")
   parser.add_argument("-c", "--check", help="check the file for conflicts, but do not schedule", action="store_true")
+  parser.add_argument("-r", "--randomize", help="Randomly shuffle acts before studio shuffle", action="store_true")
   args = parser.parse_args()
 
   min_distance = args.distance
@@ -122,9 +147,12 @@ if __name__ == "__main__":
     print "Check complete. Terminating..."
     sys.exit(0)
 
-  if args.shuffle:
-    print "Shuffling studios..."
-    unsorted_entries = distribute_studios(unsorted_entries)
+  if args.randomize:
+    seed = random.randint(0, sys.maxint)
+    rng = random.Random(seed)
+    print "Randomizing input with seed %d ..." % seed
+    rng.shuffle(unsorted_entries)
+    #unsorted_entries = distribute_studios(unsorted_entries)
   
   print "%d entries found.\n" % len(unsorted_entries)
 
@@ -138,6 +166,9 @@ if __name__ == "__main__":
     sorted_entries = schedule(unsorted_entries, min_distance)
   else:
     sorted_entries = unsorted_entries
+
+  if args.randomize:
+    print "RNG seed was %d" % seed
 
   if do_export:
     print "Writing results to file: %s" % out_filename
