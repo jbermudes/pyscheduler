@@ -5,6 +5,7 @@ import argparse
 import csv
 import itertools
 import os
+import time
 import random
 import sys
 import scheduler
@@ -110,6 +111,8 @@ def schedule(entries, min_distance):
 
     if c3 < c2:
       sorted_entries = sorted2
+    else:
+      print "No improvement, using previous results"
 
   return sorted_entries
 
@@ -121,6 +124,7 @@ if __name__ == "__main__":
   parser.add_argument("-o", "--output", help="the file to use for the new schedule", action="store_true")
   parser.add_argument("-c", "--check", help="check the file for conflicts, but do not schedule", action="store_true")
   parser.add_argument("-r", "--randomize", help="Randomly shuffle acts before studio shuffle", action="store_true")
+  parser.add_argument("-g", "--seed", help="Use seed for RNG", type=int)
   args = parser.parse_args()
 
   min_distance = args.distance
@@ -132,10 +136,12 @@ if __name__ == "__main__":
   file_dir = os.path.dirname(filename)
   base = os.path.basename(filename)
   base_components = os.path.splitext(base)
+  timestamp = time.strftime('%d_%H_%M_%S')
 
-  out_filename = os.path.join(file_dir, base_components[0] + '.sorted.csv')
+  out_filename = os.path.join(file_dir, base_components[0] + '.sorted_' + timestamp + '.csv')
   if do_export:
     print "Output file: %s" % out_filename
+
 
   print
       
@@ -148,7 +154,12 @@ if __name__ == "__main__":
     sys.exit(0)
 
   if args.randomize:
-    seed = random.randint(0, sys.maxint)
+    if args.seed:
+      seed = args.seed
+      print "Loading user selected seed %d" % seed
+    else:
+      seed = random.randint(0, sys.maxint)
+
     rng = random.Random(seed)
     print "Randomizing input with seed %d ..." % seed
     rng.shuffle(unsorted_entries)
@@ -161,8 +172,10 @@ if __name__ == "__main__":
   print "%d conflicts found.\n" % c
 
   if c > 0:
-    print "Shuffling Studios..."
-    unsorted_entries = distribute_studios(unsorted_entries)
+    if args.shuffle:
+      print "Shuffling Studios...\n"
+      unsorted_entries = distribute_studios(unsorted_entries)
+    print "Scheduling..."
     sorted_entries = schedule(unsorted_entries, min_distance)
   else:
     sorted_entries = unsorted_entries

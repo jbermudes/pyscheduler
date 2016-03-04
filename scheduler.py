@@ -42,15 +42,18 @@ def do_schedule(unscheduled_list, min_distance):
   dst.append(src.pop(0))
 
   while len(src) > 0:
+    # Grab the last D routines of the dst list
     dst_end = dst[-min_distance:]
     #print "\nsrc: ", src
     #print "dst: ", dst
     
+    # If the top of the src stack does not conflict with the last D routines
     if src[0] not in dst_end:
+      # Go ahead and add it to the schedule
       dst.append(src.pop(0))
     else:
       #print "Conflict found, trying strategy 1"
-      # Strategy 1: search src for a suitable candidate
+      # Resolution Strategy 1: search src for a suitable candidate
       candidate_found = False
       for k in xrange(len(src)):
         if src[k] not in dst_end:
